@@ -1,74 +1,95 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+interface TodoItem {
+    id: string;
+    text: string;
+    completed: boolean;
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+interface TodoSection {
+    title: string;
+    todos: TodoItem[];
+}
+
+export default function TodoListScreen() {
+    const [sections, setSections] = useState<TodoSection[]>([
+        {
+            title: "Today",
+            todos: [
+                { id: "1", text: "Buy groceries", completed: false },
+                { id: "2", text: "Call mom", completed: true },
+                { id: "3", text: "Send email to client", completed: false },
+            ],
+        },
+        {
+            title: "This Week",
+            todos: [
+                { id: "4", text: "Finish project report", completed: false },
+                { id: "5", text: "Team meeting on Thursday", completed: false },
+                { id: "6", text: "Review quarterly goals", completed: false },
+            ],
+        },
+        {
+            title: "Upcoming",
+            todos: [
+                { id: "7", text: "Doctor's appointment next Monday", completed: false },
+                { id: "8", text: "Vacation planning", completed: false },
+                { id: "9", text: "Car maintenance", completed: false },
+            ],
+        },
+    ]);
+
+    const toggleTodo = (sectionIndex: number, todoId: string) => {
+        setSections(prevSections => {
+            const newSections = [...prevSections];
+            const section = newSections[sectionIndex];
+            const todoIndex = section.todos.findIndex(todo => todo.id === todoId);
+            section.todos[todoIndex].completed = !section.todos[todoIndex].completed;
+            return newSections;
+        });
+    };
+
+    return (
+        <ThemedView className="flex-1">
+            <ThemedView className="flex-row justify-between items-center px-5 pt-16 pb-5">
+                <View>
+                    <ThemedText className="text-3xl font-bold">Good Morning,</ThemedText>
+                    <ThemedText className="text-3xl font-bold">Karthik</ThemedText>
+                </View>
+                <Pressable className="p-2">
+                    <IconSymbol name="plus" size={24} color="#007AFF" />
+                </Pressable>
+            </ThemedView>
+
+            <ScrollView className="flex-1">
+                {sections.map((section, sectionIndex) => (
+                    <ThemedView key={section.title} className="px-5 mb-6">
+                        <ThemedText className="text-xl font-semibold mb-3">{section.title}</ThemedText>
+                        {section.todos.map(todo => (
+                            <Pressable
+                                key={todo.id}
+                                className="py-3 px-4 bg-gray-100 rounded-xl mb-2"
+                                onPress={() => toggleTodo(sectionIndex, todo.id)}
+                            >
+                                <View className="flex-row items-center">
+                                    <View className={`w-6 h-6 rounded-full border-2 border-blue-500 mr-3 items-center justify-center ${todo.completed ? 'bg-blue-500' : ''}`}>
+                                        {todo.completed && (
+                                            <IconSymbol name="checkmark" size={16} color="white" />
+                                        )}
+                                    </View>
+                                    <ThemedText className={`text-base flex-1 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
+                                        {todo.text}
+                                    </ThemedText>
+                                </View>
+                            </Pressable>
+                        ))}
+                    </ThemedView>
+                ))}
+            </ScrollView>
+        </ThemedView>
+    );
+}
