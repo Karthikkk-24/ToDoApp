@@ -10,7 +10,7 @@ const SettingsOption = ({
   iconName 
 }: { 
   title: string, 
-  iconName: string 
+  iconName: "chevron-right" | "chevron-down" | "cog" | "bell" | "user" 
 }) => {
   return (
     <TouchableOpacity style={styles.settingsOption}>

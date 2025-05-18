@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/HapticTab';
@@ -16,27 +16,26 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#CBFF00', // Neon green from the design
-        tabBarInactiveTintColor: '#888',
+        tabBarInactiveTintColor: '#444', // Darker inactive icons
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
+        tabBarShowLabel: true, // Show labels below icons
         tabBarStyle: {
-          backgroundColor: '#111',
+          height: 80,
+          backgroundColor: '#000', // Pure black background
           borderTopWidth: 0,
-          height: 60,
-          paddingBottom: 8,
-          ...Platform.select({
-            ios: {
-              position: 'absolute',
-            },
-            default: {},
-          }),
+          paddingTop: 5,
+          paddingBottom: 25,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          marginBottom: 5,
+          paddingBottom: 2,
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tasks',
+          title: 'Home',
           tabBarIcon: ({ color }) => <FontAwesome name="home" size={24} color={color} />,
         }}
       />
