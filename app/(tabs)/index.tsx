@@ -1,9 +1,9 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, TextInput, Modal, Animated, Dimensions, KeyboardAvoidingView, Platform, PanResponder } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { useState, useRef, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, KeyboardAvoidingView, Modal, PanResponder, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Component for a single task item
 const TaskItem = ({ text, onToggle, isChecked }: { text: string, onToggle: () => void, isChecked: boolean }) => {
@@ -79,7 +79,10 @@ const AddTaskModal = ({
   
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const screenHeight = Dimensions.get('window').height;
-  const modalHeight = screenHeight * 0.5; // Half the screen height
+  const modalHeight = screenHeight * 0.6; // Adjusted modal height for better usability
+  
+  // Make modal scrollable if content exceeds height
+  const scrollViewRef = useRef(null);
   
   // Pan responder for the pull-down gesture
   const panResponder = useRef(
@@ -166,9 +169,15 @@ const AddTaskModal = ({
   };
   
   const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
     if (selectedDate) {
       setSelectedDate(selectedDate);
+      // On iOS, we need to explicitly close the date picker
+      if (Platform.OS === 'ios') {
+        setShowDatePicker(false);
+      }
     }
   };
   
@@ -193,6 +202,12 @@ const AddTaskModal = ({
           style={[styles.modalContent, { height: animatedHeight }]}
           {...panResponder.panHandlers}
         >
+          <ScrollView 
+            ref={scrollViewRef} 
+            style={styles.modalScrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.modalScrollViewContent}
+          >
           <View style={styles.modalHandle} />
           
           <Text style={styles.modalTitle}>Add New Task</Text>
@@ -221,7 +236,7 @@ const AddTaskModal = ({
             <DateTimePicker
               value={selectedDate}
               mode="date"
-              display="default"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
               onChange={onDateChange}
               minimumDate={new Date()}
               themeVariant="dark"
@@ -286,6 +301,7 @@ const AddTaskModal = ({
             </View>
           </View>
           
+          </ScrollView>
           <TouchableOpacity style={styles.addTaskButton} onPress={handleAddTask}>
             <Text style={styles.addTaskButtonText}>Add Task</Text>
           </TouchableOpacity>
@@ -301,7 +317,7 @@ export default function TasksScreen() {
   const [weekTasks, setWeekTasks] = useState(['Finish client project', 'Complete JS course', 'Research about the upcoming AI tools']);
   const [upcomingTasks, setUpcomingTasks] = useState(['Seek out for higher paying corporate Jobs', 'Increase social media reach']);
   
-  // State for add task modal
+  // Define state for managing the modal visibility and form data
   const [modalVisible, setModalVisible] = useState(false);
   
   // State to track checked tasks
@@ -378,6 +394,14 @@ export default function TasksScreen() {
 }
 
 const styles = StyleSheet.create({
+  modalScrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  modalScrollViewContent: {
+    paddingBottom: 20,
+  },
+
   // Modal styles
   modalContainer: {
     flex: 1,
@@ -396,11 +420,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
+    paddingBottom: 10,
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   modalHandle: {
     width: 40,
@@ -418,17 +448,17 @@ const styles = StyleSheet.create({
   },
   taskInput: {
     backgroundColor: '#222',
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
+    borderRadius: 8,
     color: '#fff',
-    marginBottom: 15,
+    padding: 12,
+    marginVertical: 10,
+    fontSize: 16,
   },
   dateSelector: {
+    marginVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 15,
   },
   sectionLabel: {
     fontSize: 14,
@@ -452,12 +482,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   optionSection: {
-    marginBottom: 15,
+    marginTop: 12,
+    marginBottom: 0,
     flexDirection: 'row',
     alignItems: 'center',
   },
   optionsScrollView: {
-    flex: 1,
+    marginTop: 10,
+    paddingBottom: 5,
   },
   categoryChip: {
     backgroundColor: '#222',
@@ -514,10 +546,11 @@ const styles = StyleSheet.create({
   },
   addTaskButton: {
     backgroundColor: '#CBFF00',
-    borderRadius: 10,
-    padding: 15,
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 5,
   },
   addTaskButtonText: {
     color: '#000',
