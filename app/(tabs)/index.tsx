@@ -317,6 +317,15 @@ export default function TasksScreen() {
   const [weekTasks, setWeekTasks] = useState(['Finish client project', 'Complete JS course', 'Research about the upcoming AI tools']);
   const [upcomingTasks, setUpcomingTasks] = useState(['Seek out for higher paying corporate Jobs', 'Increase social media reach']);
   
+  // State for search functionality
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<{ today: string[], week: string[], upcoming: string[] }>({ 
+    today: [], 
+    week: [], 
+    upcoming: [] 
+  });
+  
   // Define state for managing the modal visibility and form data
   const [modalVisible, setModalVisible] = useState(false);
   
@@ -329,6 +338,46 @@ export default function TasksScreen() {
       ...prev,
       [taskId]: !prev[taskId]
     }));
+  };
+  
+  // Function to handle search
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+    
+    if (text.trim() === '') {
+      // Clear search results when query is empty
+      setSearchResults({ today: [], week: [], upcoming: [] });
+      return;
+    }
+    
+    // Filter tasks based on search query
+    const filteredToday = todayTasks.filter(task => 
+      task.toLowerCase().includes(text.toLowerCase())
+    );
+    
+    const filteredWeek = weekTasks.filter(task => 
+      task.toLowerCase().includes(text.toLowerCase())
+    );
+    
+    const filteredUpcoming = upcomingTasks.filter(task => 
+      task.toLowerCase().includes(text.toLowerCase())
+    );
+    
+    setSearchResults({
+      today: filteredToday,
+      week: filteredWeek,
+      upcoming: filteredUpcoming
+    });
+  };
+  
+  // Toggle search mode
+  const toggleSearch = () => {
+    setIsSearchActive(!isSearchActive);
+    if (isSearchActive) {
+      // Clear search when closing
+      setSearchQuery('');
+      setSearchResults({ today: [], week: [], upcoming: [] });
+    }
   };
   
   // Function to add a new task
@@ -351,33 +400,94 @@ export default function TasksScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.header}>
-        <TouchableOpacity>
-          <FontAwesome name="bars" size={24} color="#CBFF00" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <FontAwesome name="search" size={24} color="#CBFF00" />
-        </TouchableOpacity>
+        {isSearchActive ? (
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search tasks..."
+              placeholderTextColor="#666"
+              value={searchQuery}
+              onChangeText={handleSearch}
+              autoFocus
+            />
+            <TouchableOpacity onPress={toggleSearch}>
+              <FontAwesome name="times" size={20} color="#CBFF00" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity>
+              <FontAwesome name="bars" size={24} color="#CBFF00" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleSearch}>
+              <FontAwesome name="search" size={24} color="#CBFF00" />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
       
       <ScrollView style={styles.scrollView}>
-        <TaskSection 
-          title="Today" 
-          tasks={todayTasks} 
-          checkedTasks={checkedTasks} 
-          onToggleTask={toggleTask} 
-        />
-        <TaskSection 
-          title="This week" 
-          tasks={weekTasks} 
-          checkedTasks={checkedTasks} 
-          onToggleTask={toggleTask} 
-        />
-        <TaskSection 
-          title="Upcoming" 
-          tasks={upcomingTasks} 
-          checkedTasks={checkedTasks} 
-          onToggleTask={toggleTask} 
-        />
+        {isSearchActive && searchQuery.trim() !== '' ? (
+          // Show search results
+          <>
+            {searchResults.today.length === 0 && 
+             searchResults.week.length === 0 && 
+             searchResults.upcoming.length === 0 ? (
+              <View style={styles.noResultsContainer}>
+                <Text style={styles.noResultsText}>No matches found</Text>
+              </View>
+            ) : (
+              <>
+                {searchResults.today.length > 0 && (
+                  <TaskSection 
+                    title="Today" 
+                    tasks={searchResults.today} 
+                    checkedTasks={checkedTasks} 
+                    onToggleTask={toggleTask} 
+                  />
+                )}
+                {searchResults.week.length > 0 && (
+                  <TaskSection 
+                    title="This week" 
+                    tasks={searchResults.week} 
+                    checkedTasks={checkedTasks} 
+                    onToggleTask={toggleTask} 
+                  />
+                )}
+                {searchResults.upcoming.length > 0 && (
+                  <TaskSection 
+                    title="Upcoming" 
+                    tasks={searchResults.upcoming} 
+                    checkedTasks={checkedTasks} 
+                    onToggleTask={toggleTask} 
+                  />
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          // Show normal task lists
+          <>
+            <TaskSection 
+              title="Today" 
+              tasks={todayTasks} 
+              checkedTasks={checkedTasks} 
+              onToggleTask={toggleTask} 
+            />
+            <TaskSection 
+              title="This week" 
+              tasks={weekTasks} 
+              checkedTasks={checkedTasks} 
+              onToggleTask={toggleTask} 
+            />
+            <TaskSection 
+              title="Upcoming" 
+              tasks={upcomingTasks} 
+              checkedTasks={checkedTasks} 
+              onToggleTask={toggleTask} 
+            />
+          </>
+        )}
       </ScrollView>
       
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
@@ -394,6 +504,31 @@ export default function TasksScreen() {
 }
 
 const styles = StyleSheet.create({
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#222',
+    borderRadius: 8,
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 5,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    color: '#fff',
+    fontSize: 16,
+    padding: 8,
+  },
+  noResultsContainer: {
+    padding: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noResultsText: {
+    color: '#666',
+    fontSize: 16,
+  },
   modalScrollView: {
     flex: 1,
     width: '100%',
