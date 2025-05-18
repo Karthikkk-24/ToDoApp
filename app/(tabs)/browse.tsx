@@ -41,7 +41,7 @@ export default function BrowseScreen() {
             <StatusBar style="light" />
 
             <View style={styles.header}>
-                <Text style={styles.headerText}>Browse</Text>
+                <Text style={styles.headerText}>ZenBrowse</Text>
             </View>
 
             <ScrollView style={styles.scrollView}>

@@ -26,7 +26,7 @@ export default function SettingsScreen() {
             <StatusBar style="light" />
 
             <View style={styles.header}>
-                <Text style={styles.headerText}>Settings</Text>
+                <Text style={styles.headerText}>ZenSettings</Text>
             </View>
 
             <View style={styles.profileContainer}>

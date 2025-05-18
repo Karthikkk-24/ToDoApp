@@ -17,6 +17,7 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Sidebar from "../../components/Sidebar";
 
 // Component for a single task item
 const TaskItem = ({
@@ -395,6 +396,9 @@ export default function TasksScreen() {
         upcoming: [],
     });
 
+    // State for sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     // Define state for managing the modal visibility and form data
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -466,34 +470,40 @@ export default function TasksScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar style="light" />
-            <View style={styles.header}>
-                {isSearchActive ? (
-                    <View style={styles.searchContainer}>
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Search tasks..."
-                            placeholderTextColor="#666"
-                            value={searchQuery}
-                            onChangeText={handleSearch}
-                            autoFocus
-                        />
-                        <TouchableOpacity onPress={toggleSearch}>
-                            <FontAwesome name="times" size={20} color="#CBFF00" />
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    <>
-                        <TouchableOpacity>
-                            <FontAwesome name="bars" size={24} color="#CBFF00" />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={toggleSearch}>
-                            <FontAwesome name="search" size={24} color="#CBFF00" />
-                        </TouchableOpacity>
-                    </>
-                )}
-            </View>
+        <>
+            <Sidebar 
+                isOpen={isSidebarOpen} 
+                onClose={() => setIsSidebarOpen(false)} 
+            />
+            
+            <SafeAreaView style={styles.container}>
+                <StatusBar style="light" />
+                <View style={styles.header}>
+                    {isSearchActive ? (
+                        <View style={styles.searchContainer}>
+                            <TextInput
+                                style={styles.searchInput}
+                                placeholder="Search tasks..."
+                                placeholderTextColor="#666"
+                                value={searchQuery}
+                                onChangeText={handleSearch}
+                                autoFocus
+                            />
+                            <TouchableOpacity onPress={toggleSearch}>
+                                <FontAwesome name="times" size={20} color="#CBFF00" />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <>
+                            <TouchableOpacity onPress={() => setIsSidebarOpen(true)}>
+                                <FontAwesome name="bars" size={24} color="#CBFF00" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={toggleSearch}>
+                                <FontAwesome name="search" size={24} color="#CBFF00" />
+                            </TouchableOpacity>
+                        </>
+                    )}
+                </View>
 
             <ScrollView style={styles.scrollView}>
                 {isSearchActive && searchQuery.trim() !== "" ? (
@@ -569,6 +579,7 @@ export default function TasksScreen() {
                 onAddTask={addTask}
             />
         </SafeAreaView>
+        </>
     );
 }
 
