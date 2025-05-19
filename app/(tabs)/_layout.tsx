@@ -25,6 +25,8 @@ export default function TabLayout() {
                     borderTopWidth: 0,
                     paddingTop: 5,
                     paddingBottom: 25,
+                    // Set lower z-index to allow sidebar to appear on top
+                    zIndex: 1,
                 },
                 tabBarLabelStyle: {
                     fontSize: 10,

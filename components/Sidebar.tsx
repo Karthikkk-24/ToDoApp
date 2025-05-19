@@ -9,8 +9,10 @@ import {
     Text,
     TouchableOpacity,
     View,
+    Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Portal } from 'react-native-portalize';
 
 type SidebarProps = {
     isOpen: boolean;
@@ -20,6 +22,7 @@ type SidebarProps = {
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SIDEBAR_WIDTH = SCREEN_WIDTH * 0.7;
 
+// Create a portal for the sidebar to ensure it renders at the root level
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     
     // Animation value for the sidebar
@@ -56,8 +59,11 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     // Don't return null when closed, just make it invisible
     // This ensures animations work properly
     
+    if (!isOpen) return null; // Force the sidebar to unmount when not visible
+    
     return (
-        <View style={[styles.container, { opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'auto' : 'none' }]}>
+        <Portal>
+            <View style={styles.container}>
             {/* Backdrop - closes sidebar when clicked */}
             <TouchableOpacity style={styles.backdrop} onPress={onClose} activeOpacity={1} />
             
@@ -90,27 +96,36 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     </TouchableOpacity>
                 </SafeAreaView>
             </Animated.View>
-        </View>
+            </View>
+        </Portal>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        position: "absolute",
+        ...StyleSheet.absoluteFillObject,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        zIndex: 9999,
-        elevation: 9999,
+        // Extreme z-index values to force it on top of everything
+        zIndex: 999999,
+        elevation: 999999,
     },
     backdrop: {
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        width: '100%',
+        height: '100%',
+        backgroundColor: "rgba(0, 0, 0, 0.7)", // Slightly darker for better visibility
+        zIndex: 999998,
+        elevation: 999998,
     },
     sidebar: {
         position: "absolute",
@@ -121,8 +136,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#111",
         borderRightWidth: 1,
         borderRightColor: "#333",
-        zIndex: 9999,
-        elevation: 9999,
+        zIndex: 999999,
+        elevation: 999999,
     },
     sidebarContent: {
         flex: 1,

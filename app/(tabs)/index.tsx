@@ -471,11 +471,6 @@ export default function TasksScreen() {
 
     return (
         <>
-            <Sidebar 
-                isOpen={isSidebarOpen} 
-                onClose={() => setIsSidebarOpen(false)} 
-            />
-            
             <SafeAreaView style={styles.container}>
                 <StatusBar style="light" />
                 <View style={styles.header}>
@@ -579,6 +574,12 @@ export default function TasksScreen() {
                 onAddTask={addTask}
             />
         </SafeAreaView>
+            
+            {/* Render Sidebar last to ensure it's on top of everything */}
+            <Sidebar 
+                isOpen={isSidebarOpen} 
+                onClose={() => setIsSidebarOpen(false)} 
+            />
         </>
     );
 }
