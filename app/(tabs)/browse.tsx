@@ -1,8 +1,9 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Sidebar from "../../components/Sidebar";
 
 // Category item component
 const CategoryItem = ({ title, expanded = false }: { title: string; expanded?: boolean }) => {
@@ -36,45 +37,88 @@ const ProjectItem = ({ title }: { title: string }) => {
 };
 
 export default function BrowseScreen() {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSearchActive, setIsSearchActive] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Toggle search mode
+    const toggleSearch = () => {
+        setIsSearchActive(!isSearchActive);
+        if (isSearchActive) {
+            setSearchQuery("");
+        }
+    };
+
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar style="light" />
+        <>
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+            />
 
-            <View style={styles.header}>
-                <Text style={styles.headerText}>ZenBrowse</Text>
-            </View>
+            <SafeAreaView style={styles.container}>
+                <StatusBar style="light" />
 
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Tasks :</Text>
-
-                    <TouchableOpacity style={styles.inboxItem}>
-                        <Text style={styles.inboxText}>Inbox</Text>
-                        <FontAwesome name="plus" size={16} color="#CBFF00" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.completedItem}>
-                        <Text style={styles.completedText}>Completed Tasks</Text>
-                        <FontAwesome name="chevron-right" size={16} color="#CBFF00" />
-                    </TouchableOpacity>
+                <View style={styles.header}>
+                    {isSearchActive ? (
+                        <View style={styles.searchContainer}>
+                            <TextInput
+                                style={styles.searchInput}
+                                placeholder="Search..."
+                                placeholderTextColor="#666"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                autoFocus
+                            />
+                            <TouchableOpacity onPress={toggleSearch}>
+                                <FontAwesome name="times" size={20} color="#CBFF00" />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <>
+                            <TouchableOpacity onPress={() => setIsSidebarOpen(true)}>
+                                <FontAwesome name="bars" size={24} color="#CBFF00" />
+                            </TouchableOpacity>
+                            <Text style={styles.headerText}>ZenBrowse</Text>
+                            <TouchableOpacity onPress={toggleSearch}>
+                                <FontAwesome name="search" size={24} color="#CBFF00" />
+                            </TouchableOpacity>
+                        </>
+                    )}
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Tags :</Text>
+                <ScrollView style={styles.scrollView}>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Tasks :</Text>
 
-                    <CategoryItem title="Javascript" expanded={true} />
-                    <CategoryItem title="Client Work" />
-                </View>
+                        <TouchableOpacity style={styles.inboxItem}>
+                            <Text style={styles.inboxText}>Inbox</Text>
+                            <FontAwesome name="plus" size={16} color="#CBFF00" />
+                        </TouchableOpacity>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>My Projects :</Text>
+                        <TouchableOpacity style={styles.completedItem}>
+                            <Text style={styles.completedText}>Completed Tasks</Text>
+                            <FontAwesome name="chevron-right" size={16} color="#CBFF00" />
+                        </TouchableOpacity>
+                    </View>
 
-                    <ProjectItem title="DSA" />
-                    <ProjectItem title="Masters Cybersecurity" />
-                    <ProjectItem title="Autism DB" />
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Tags :</Text>
+
+                        <CategoryItem title="Javascript" expanded={true} />
+                        <CategoryItem title="Client Work" />
+                    </View>
+
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>My Projects :</Text>
+
+                        <ProjectItem title="DSA" />
+                        <ProjectItem title="Masters Cybersecurity" />
+                        <ProjectItem title="Autism DB" />
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </>
     );
 }
 
@@ -85,10 +129,25 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
     },
     header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 15,
         paddingVertical: 15,
         borderBottomWidth: 0.2,
         borderBottomColor: "#333",
+    },
+    searchContainer: {
+        flexDirection: "row",
         alignItems: "center",
+        flex: 1,
+        justifyContent: "space-between",
+    },
+    searchInput: {
+        flex: 1,
+        color: "#fff",
+        fontSize: 16,
+        marginRight: 10,
     },
     headerText: {
         fontSize: 20,
