@@ -8,6 +8,8 @@ import "react-native-reanimated";
 import { Host } from 'react-native-portalize';
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { AuthProvider } from "@/contexts/AuthContext";
+import AuthWrapper from "@/components/AuthWrapper";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -29,14 +31,21 @@ export default function RootLayout() {
     }
 
     return (
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-            <Host>
-                <Stack>
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen name="+not-found" />
-                </Stack>
-                <StatusBar style="auto" />
-            </Host>
-        </ThemeProvider>
+        <AuthProvider>
+            <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+                <Host>
+                    <AuthWrapper>
+                        <Stack>
+                            <Stack.Screen name="index" options={{ headerShown: false }} />
+                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                            <Stack.Screen name="login" options={{ headerShown: false }} />
+                            <Stack.Screen name="register" options={{ headerShown: false }} />
+                            <Stack.Screen name="+not-found" />
+                        </Stack>
+                    </AuthWrapper>
+                    <StatusBar style="auto" />
+                </Host>
+            </ThemeProvider>
+        </AuthProvider>
     );
 }

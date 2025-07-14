@@ -1,22 +1,28 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../../components/Sidebar";
+import { useAuth } from "@/contexts/AuthContext";
+import { router } from "expo-router";
 
 // Component for settings option item
 const SettingsOption = ({
     title,
     iconName,
+    onPress,
+    isLogout = false,
 }: {
     title: string;
-    iconName: "chevron-right" | "chevron-down" | "cog" | "bell" | "user";
+    iconName: "chevron-right" | "chevron-down" | "cog" | "bell" | "user" | "sign-out";
+    onPress?: () => void;
+    isLogout?: boolean;
 }) => {
     return (
-        <TouchableOpacity style={styles.settingsOption}>
-            <Text style={styles.settingsOptionText}>{title}</Text>
-            <FontAwesome name={iconName} size={18} color="#CBFF00" />
+        <TouchableOpacity style={[styles.settingsOption, isLogout && styles.logoutOption]} onPress={onPress}>
+            <Text style={[styles.settingsOptionText, isLogout && styles.logoutText]}>{title}</Text>
+            <FontAwesome name={iconName} size={18} color={isLogout ? "#ff4757" : "#CBFF00"} />
         </TouchableOpacity>
     );
 };
@@ -25,6 +31,7 @@ export default function SettingsScreen() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const { user, logout } = useAuth();
 
     // Toggle search mode
     const toggleSearch = () => {
@@ -32,6 +39,28 @@ export default function SettingsScreen() {
         if (isSearchActive) {
             setSearchQuery("");
         }
+    };
+
+    // Handle logout
+    const handleLogout = () => {
+        Alert.alert(
+            "Logout",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
+                {
+                    text: "Logout",
+                    style: "destructive",
+                    onPress: async () => {
+                        await logout();
+                        router.replace("/login");
+                    },
+                },
+            ]
+        );
     };
 
     return (
@@ -77,14 +106,14 @@ export default function SettingsScreen() {
                         <FontAwesome name="user-circle" size={80} color="#CBFF00" />
                     </View>
 
-                    <Text style={styles.userName}>Karthik Shettigar</Text>
+                    <Text style={styles.userName}>{user?.name || "User"}</Text>
 
                     <View style={styles.profileInfoContainer}>
                         <Text style={styles.profileLabel}>
-                            Nickname : <Text style={styles.profileValue}>KK</Text>
+                            Nickname : <Text style={styles.profileValue}>{user?.name?.split(' ')[0] || "User"}</Text>
                         </Text>
                         <Text style={styles.profileLabel}>
-                            Email ID : <Text style={styles.profileValue}>abc@gmail.com</Text>
+                            Email ID : <Text style={styles.profileValue}>{user?.email || "user@example.com"}</Text>
                         </Text>
                         <Text style={styles.profileLabel}>
                             Total tasks completed : <Text style={styles.profileValue}>99</Text>
@@ -98,6 +127,12 @@ export default function SettingsScreen() {
                     <SettingsOption title="Change Avatar" iconName="chevron-right" />
                     <SettingsOption title="Change Nickname" iconName="chevron-right" />
                     <SettingsOption title="Weekly Goal" iconName="chevron-right" />
+                    <SettingsOption 
+                        title="Logout" 
+                        iconName="sign-out" 
+                        onPress={handleLogout}
+                        isLogout={true}
+                    />
                 </View>
             </SafeAreaView>
         </>
@@ -182,5 +217,13 @@ const styles = StyleSheet.create({
     settingsOptionText: {
         fontSize: 16,
         color: "#fff",
+    },
+    logoutOption: {
+        borderTopWidth: 1,
+        borderTopColor: "#333",
+        marginTop: 10,
+    },
+    logoutText: {
+        color: "#ff4757",
     },
 });
