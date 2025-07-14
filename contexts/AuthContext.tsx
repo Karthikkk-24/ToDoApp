@@ -44,7 +44,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error checking auth state:', error);
     } finally {
-      setLoading(false);
+      // Add a small delay to ensure components are mounted
+      setTimeout(() => setLoading(false), 100);
     }
   };
 

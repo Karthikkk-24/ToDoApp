@@ -1,20 +1,26 @@
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { router, useRootNavigationState } from 'expo-router';
 
 export default function Index() {
   const { user, loading } = useAuth();
+  const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
-    if (!loading) {
-      if (user) {
-        router.replace('/(tabs)');
-      } else {
-        router.replace('/login');
-      }
+    // Only navigate once auth is loaded and navigation is ready
+    if (!loading && rootNavigationState?.key) {
+      const timeoutId = setTimeout(() => {
+        if (user) {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/login');
+        }
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [user, loading]);
+  }, [user, loading, rootNavigationState]);
 
   return (
     <View style={styles.container}>
