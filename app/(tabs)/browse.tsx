@@ -54,6 +54,7 @@ export default function BrowseScreen() {
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedCategories, setExpandedCategories] = useState<{[key: string]: boolean}>({});
     const [expandedProjects, setExpandedProjects] = useState<{[key: string]: boolean}>({});
+    const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
 
     // Toggle search mode
     const toggleSearch = () => {
@@ -77,6 +78,11 @@ export default function BrowseScreen() {
             ...prev,
             [projectName]: !prev[projectName]
         }));
+    };
+
+    // Toggle completed tasks expansion
+    const toggleCompleted = () => {
+        setIsCompletedExpanded(!isCompletedExpanded);
     };
 
     return (
@@ -126,9 +132,15 @@ export default function BrowseScreen() {
                             <FontAwesome name="plus" size={16} color="#CBFF00" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.completedItem}>
-                            <Text style={styles.completedText}>Completed Tasks</Text>
-                            <FontAwesome name="chevron-right" size={16} color="#CBFF00" />
+                        <TouchableOpacity style={[styles.completedItem, isCompletedExpanded && styles.completedItemExpanded]} onPress={toggleCompleted}>
+                            <View style={styles.completedHeader}>
+                                <Text style={styles.completedText}>Completed Tasks</Text>
+                            </View>
+                            {isCompletedExpanded && (
+                                <View style={styles.completedContent}>
+                                    <Text style={styles.completedContentText}>No completed tasks yet</Text>
+                                </View>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -233,14 +245,28 @@ const styles = StyleSheet.create({
         fontWeight: "500",
     },
     completedItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
         backgroundColor: "rgba(203, 255, 0, 0.08)",
         borderRadius: 16,
         borderWidth: 1,
         borderColor: "rgba(203, 255, 0, 0.15)",
+    },
+    completedItemExpanded: {
+        marginBottom: 5,
+    },
+    completedHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         padding: 16,
+    },
+    completedContent: {
+        paddingHorizontal: 16,
+        paddingBottom: 12,
+    },
+    completedContentText: {
+        fontSize: 14,
+        color: "rgba(255, 255, 255, 0.6)",
+        fontStyle: "italic",
     },
     completedText: {
         fontSize: 16,
