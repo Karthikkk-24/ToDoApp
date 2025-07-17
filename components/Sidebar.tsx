@@ -69,7 +69,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             
             {/* Sidebar content */}
             <Animated.View style={[styles.sidebar, { transform: [{ translateX }] }]}>
-                <SafeAreaView style={styles.sidebarContent}>
+                <SafeAreaView style={[styles.sidebarContent, { backgroundColor: '#0F0F0F' }]}>
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={styles.appName}>ZenTodo</Text>
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     sidebarContent: {
         flex: 1,
         paddingVertical: 20,
+        backgroundColor: "#0F0F0F",
     },
     header: {
         paddingHorizontal: 20,
@@ -157,7 +158,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "rgba(203, 255, 0, 0.1)",
         marginBottom: 20,
-        backgroundColor: "rgba(203, 255, 0, 0.03)",
+        backgroundColor: "#0F0F0F",
+        marginTop: -20,
     },
     appName: {
         fontSize: 22,

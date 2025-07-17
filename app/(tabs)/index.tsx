@@ -1,7 +1,7 @@
-import { FontAwesome } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useRef, useState } from "react";
+import { FontAwesome } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
@@ -15,9 +15,9 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Sidebar from "../../components/Sidebar";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Sidebar from '../../components/Sidebar';
 
 // Component for a single task item
 const TaskItem = ({
@@ -39,9 +39,13 @@ const TaskItem = ({
                 </View>
             </TouchableOpacity>
             <View style={styles.taskContent}>
-                <Text style={[styles.taskTitle, isChecked && styles.taskTitleChecked]}>{title}</Text>
+                <Text style={[styles.taskTitle, isChecked && styles.taskTitleChecked]}>
+                    {title}
+                </Text>
                 {description && (
-                    <Text style={[styles.taskDescription, isChecked && styles.taskDescriptionChecked]}>
+                    <Text
+                        style={[styles.taskDescription, isChecked && styles.taskDescriptionChecked]}
+                    >
                         {description}
                     </Text>
                 )}
@@ -86,17 +90,17 @@ const TaskSection = ({
 
 // Task priority options
 const PRIORITIES = [
-    { id: "p1", label: "P1 - Highest", color: "#FF5252" },
-    { id: "p2", label: "P2 - High", color: "#FF9800" },
-    { id: "p3", label: "P3 - Medium", color: "#FFEB3B" },
-    { id: "p4", label: "P4 - Low", color: "#8BC34A" },
+    { id: 'p1', label: 'P1 - Highest', color: '#FF5252' },
+    { id: 'p2', label: 'P2 - High', color: '#FF9800' },
+    { id: 'p3', label: 'P3 - Medium', color: '#FFEB3B' },
+    { id: 'p4', label: 'P4 - Low', color: '#8BC34A' },
 ];
 
 // Categories/Tags for tasks
-const CATEGORIES = ["JavaScript", "Client Work", "Personal", "Learning", "Health"];
+const CATEGORIES = ['JavaScript', 'Client Work', 'Personal', 'Learning', 'Health'];
 
 // Projects list
-const PROJECTS = ["DSA", "Masters Cybersecurity", "Autism DB", "Personal Website"];
+const PROJECTS = ['DSA', 'Masters Cybersecurity', 'Autism DB', 'Personal Website'];
 
 // Component for the Add Task Modal
 const AddTaskModal = ({
@@ -108,15 +112,15 @@ const AddTaskModal = ({
     onClose: () => void;
     onAddTask: (task: any) => void;
 }) => {
-    const [taskText, setTaskText] = useState("");
+    const [taskText, setTaskText] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [selectedProject, setSelectedProject] = useState("");
-    const [selectedPriority, setSelectedPriority] = useState("p4");
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedProject, setSelectedProject] = useState('');
+    const [selectedPriority, setSelectedPriority] = useState('p4');
 
     const animatedHeight = useRef(new Animated.Value(0)).current;
-    const screenHeight = Dimensions.get("window").height;
+    const screenHeight = Dimensions.get('window').height;
     const modalHeight = screenHeight * 0.6; // Adjusted modal height for better usability
 
     // Make modal scrollable if content exceeds height
@@ -150,7 +154,7 @@ const AddTaskModal = ({
                     }).start();
                 }
             },
-        })
+        }),
     ).current;
 
     useEffect(() => {
@@ -172,7 +176,7 @@ const AddTaskModal = ({
     }, [visible]);
 
     const handleAddTask = () => {
-        if (taskText.trim() === "") return;
+        if (taskText.trim() === '') return;
 
         onAddTask({
             text: taskText,
@@ -183,20 +187,20 @@ const AddTaskModal = ({
         });
 
         // Reset form
-        setTaskText("");
+        setTaskText('');
         setSelectedDate(new Date());
-        setSelectedCategory("");
-        setSelectedProject("");
-        setSelectedPriority("p4");
+        setSelectedCategory('');
+        setSelectedProject('');
+        setSelectedPriority('p4');
 
         onClose();
     };
 
     const formatDate = (date: Date) => {
-        return date.toLocaleDateString("en-US", {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
+        return date.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
         });
     };
 
@@ -213,13 +217,13 @@ const AddTaskModal = ({
     };
 
     const onDateChange = (event: any, selectedDate?: Date) => {
-        if (Platform.OS === "android") {
+        if (Platform.OS === 'android') {
             setShowDatePicker(false);
         }
         if (selectedDate) {
             setSelectedDate(selectedDate);
             // On iOS, we need to explicitly close the date picker
-            if (Platform.OS === "ios") {
+            if (Platform.OS === 'ios') {
                 setShowDatePicker(false);
             }
         }
@@ -228,7 +232,7 @@ const AddTaskModal = ({
     return (
         <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.modalContainer}
             >
                 <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose} />
@@ -271,7 +275,7 @@ const AddTaskModal = ({
                             <DateTimePicker
                                 value={selectedDate}
                                 mode="date"
-                                display={Platform.OS === "ios" ? "spinner" : "default"}
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                                 onChange={onDateChange}
                                 minimumDate={new Date()}
                                 themeVariant="dark"
@@ -327,7 +331,7 @@ const AddTaskModal = ({
                                         <FontAwesome
                                             name="folder"
                                             size={12}
-                                            color={selectedProject === project ? "#000" : "#CBFF00"}
+                                            color={selectedProject === project ? '#000' : '#CBFF00'}
                                             style={styles.chipIcon}
                                         />
                                         <Text
@@ -384,26 +388,45 @@ const AddTaskModal = ({
 export default function TasksScreen() {
     // State for all tasks with titles and descriptions (some without descriptions for comparison)
     const [todayTasks, setTodayTasks] = useState([
-        { title: "Review code changes", description: "Go through pull requests and provide feedback on the new authentication system" },
-        { title: "Write blog post" }, // No description
-        { title: "Team standup meeting", description: "Daily sync with the development team at 10 AM" },
-        { title: "Fix critical bug" } // No description
+        {
+            title: 'Review code changes',
+            description:
+                'Go through pull requests and provide feedback on the new authentication system',
+        },
+        { title: 'Write blog post' }, // No description
+        {
+            title: 'Team standup meeting',
+            description: 'Daily sync with the development team at 10 AM',
+        },
+        { title: 'Fix critical bug' }, // No description
     ]);
     const [weekTasks, setWeekTasks] = useState([
-        { title: "Complete project milestone", description: "Finish the user dashboard feature and prepare for demo" },
-        { title: "Learn TypeScript advanced patterns" }, // No description
-        { title: "Client presentation", description: "Present the new mobile app features to stakeholders" },
-        { title: "Code refactoring" } // No description
+        {
+            title: 'Complete project milestone',
+            description: 'Finish the user dashboard feature and prepare for demo',
+        },
+        { title: 'Learn TypeScript advanced patterns' }, // No description
+        {
+            title: 'Client presentation',
+            description: 'Present the new mobile app features to stakeholders',
+        },
+        { title: 'Code refactoring' }, // No description
     ]);
     const [upcomingTasks, setUpcomingTasks] = useState([
-        { title: "Plan Q4 roadmap", description: "Define priorities and features for the next quarter" },
-        { title: "Attend tech conference" }, // No description
-        { title: "Performance optimization", description: "Analyze and improve app loading times and memory usage" }
+        {
+            title: 'Plan Q4 roadmap',
+            description: 'Define priorities and features for the next quarter',
+        },
+        { title: 'Attend tech conference' }, // No description
+        {
+            title: 'Performance optimization',
+            description: 'Analyze and improve app loading times and memory usage',
+        },
     ]);
 
     // State for search functionality
     const [isSearchActive, setIsSearchActive] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<{
         today: { title: string; description?: string }[];
         week: { title: string; description?: string }[];
@@ -435,26 +458,29 @@ export default function TasksScreen() {
     const handleSearch = (text: string) => {
         setSearchQuery(text);
 
-        if (text.trim() === "") {
+        if (text.trim() === '') {
             // Clear search results when query is empty
             setSearchResults({ today: [], week: [], upcoming: [] });
             return;
         }
 
         // Filter tasks based on search query (search in both title and description)
-        const filteredToday = todayTasks.filter((task) =>
-            task.title.toLowerCase().includes(text.toLowerCase()) ||
-            (task.description && task.description.toLowerCase().includes(text.toLowerCase()))
+        const filteredToday = todayTasks.filter(
+            (task) =>
+                task.title.toLowerCase().includes(text.toLowerCase()) ||
+                (task.description && task.description.toLowerCase().includes(text.toLowerCase())),
         );
 
-        const filteredWeek = weekTasks.filter((task) =>
-            task.title.toLowerCase().includes(text.toLowerCase()) ||
-            (task.description && task.description.toLowerCase().includes(text.toLowerCase()))
+        const filteredWeek = weekTasks.filter(
+            (task) =>
+                task.title.toLowerCase().includes(text.toLowerCase()) ||
+                (task.description && task.description.toLowerCase().includes(text.toLowerCase())),
         );
 
-        const filteredUpcoming = upcomingTasks.filter((task) =>
-            task.title.toLowerCase().includes(text.toLowerCase()) ||
-            (task.description && task.description.toLowerCase().includes(text.toLowerCase()))
+        const filteredUpcoming = upcomingTasks.filter(
+            (task) =>
+                task.title.toLowerCase().includes(text.toLowerCase()) ||
+                (task.description && task.description.toLowerCase().includes(text.toLowerCase())),
         );
 
         setSearchResults({
@@ -469,7 +495,7 @@ export default function TasksScreen() {
         setIsSearchActive(!isSearchActive);
         if (isSearchActive) {
             // Clear search when closing
-            setSearchQuery("");
+            setSearchQuery('');
             setSearchResults({ today: [], week: [], upcoming: [] });
         }
     };
@@ -521,153 +547,150 @@ export default function TasksScreen() {
                     )}
                 </View>
 
-            <ScrollView style={styles.scrollView}>
-                {isSearchActive && searchQuery.trim() !== "" ? (
-                    // Show search results
-                    <>
-                        {searchResults.today.length === 0 &&
-                        searchResults.week.length === 0 &&
-                        searchResults.upcoming.length === 0 ? (
-                            <View style={styles.noResultsContainer}>
-                                <Text style={styles.noResultsText}>No matches found</Text>
-                            </View>
-                        ) : (
-                            <>
-                                {searchResults.today.length > 0 && (
-                                    <TaskSection
-                                        title="Today"
-                                        tasks={searchResults.today}
-                                        checkedTasks={checkedTasks}
-                                        onToggleTask={toggleTask}
-                                    />
-                                )}
-                                {searchResults.week.length > 0 && (
-                                    <TaskSection
-                                        title="This week"
-                                        tasks={searchResults.week}
-                                        checkedTasks={checkedTasks}
-                                        onToggleTask={toggleTask}
-                                    />
-                                )}
-                                {searchResults.upcoming.length > 0 && (
-                                    <TaskSection
-                                        title="Upcoming"
-                                        tasks={searchResults.upcoming}
-                                        checkedTasks={checkedTasks}
-                                        onToggleTask={toggleTask}
-                                    />
-                                )}
-                            </>
-                        )}
-                    </>
-                ) : (
-                    // Show normal task lists
-                    <>
-                        <TaskSection
-                            title="Today"
-                            tasks={todayTasks}
-                            checkedTasks={checkedTasks}
-                            onToggleTask={toggleTask}
-                        />
-                        <TaskSection
-                            title="This week"
-                            tasks={weekTasks}
-                            checkedTasks={checkedTasks}
-                            onToggleTask={toggleTask}
-                        />
-                        <TaskSection
-                            title="Upcoming"
-                            tasks={upcomingTasks}
-                            checkedTasks={checkedTasks}
-                            onToggleTask={toggleTask}
-                        />
-                    </>
-                )}
-            </ScrollView>
+                <ScrollView style={styles.scrollView}>
+                    {isSearchActive && searchQuery.trim() !== '' ? (
+                        // Show search results
+                        <>
+                            {searchResults.today.length === 0 &&
+                            searchResults.week.length === 0 &&
+                            searchResults.upcoming.length === 0 ? (
+                                <View style={styles.noResultsContainer}>
+                                    <Text style={styles.noResultsText}>No matches found</Text>
+                                </View>
+                            ) : (
+                                <>
+                                    {searchResults.today.length > 0 && (
+                                        <TaskSection
+                                            title="Today"
+                                            tasks={searchResults.today}
+                                            checkedTasks={checkedTasks}
+                                            onToggleTask={toggleTask}
+                                        />
+                                    )}
+                                    {searchResults.week.length > 0 && (
+                                        <TaskSection
+                                            title="This week"
+                                            tasks={searchResults.week}
+                                            checkedTasks={checkedTasks}
+                                            onToggleTask={toggleTask}
+                                        />
+                                    )}
+                                    {searchResults.upcoming.length > 0 && (
+                                        <TaskSection
+                                            title="Upcoming"
+                                            tasks={searchResults.upcoming}
+                                            checkedTasks={checkedTasks}
+                                            onToggleTask={toggleTask}
+                                        />
+                                    )}
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        // Show normal task lists
+                        <>
+                            <TaskSection
+                                title="Today"
+                                tasks={todayTasks}
+                                checkedTasks={checkedTasks}
+                                onToggleTask={toggleTask}
+                            />
+                            <TaskSection
+                                title="This week"
+                                tasks={weekTasks}
+                                checkedTasks={checkedTasks}
+                                onToggleTask={toggleTask}
+                            />
+                            <TaskSection
+                                title="Upcoming"
+                                tasks={upcomingTasks}
+                                checkedTasks={checkedTasks}
+                                onToggleTask={toggleTask}
+                            />
+                        </>
+                    )}
+                </ScrollView>
 
-            <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-                <FontAwesome name="plus" size={24} color="#000" />
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+                    <FontAwesome name="plus" size={24} color="#000" />
+                </TouchableOpacity>
 
-            <AddTaskModal
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onAddTask={addTask}
-            />
-        </SafeAreaView>
-            
+                <AddTaskModal
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    onAddTask={addTask}
+                />
+            </SafeAreaView>
+
             {/* Render Sidebar last to ensure it's on top of everything */}
-            <Sidebar 
-                isOpen={isSidebarOpen} 
-                onClose={() => setIsSidebarOpen(false)} 
-            />
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         </>
     );
 }
 
 const styles = StyleSheet.create({
     searchContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
         borderRadius: 12,
         flex: 1,
         paddingLeft: 12,
         paddingRight: 8,
         borderWidth: 1,
-        borderColor: "rgba(203, 255, 0, 0.2)",
+        borderColor: 'rgba(203, 255, 0, 0.2)',
     },
     searchInput: {
         flex: 1,
         height: 44,
-        color: "#fff",
+        color: '#fff',
         fontSize: 15,
         padding: 8,
     },
     noResultsContainer: {
         padding: 40,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
         marginTop: 20,
     },
     noResultsText: {
-        color: "rgba(255, 255, 255, 0.5)",
+        color: 'rgba(255, 255, 255, 0.5)',
         fontSize: 15,
-        fontWeight: "500",
+        fontWeight: '500',
     },
     modalScrollView: {
         flex: 1,
-        width: "100%",
+        width: '100%',
     },
     modalScrollViewContent: {
-        paddingBottom: 20,
+        paddingBottom: 30,
     },
 
     // Modal styles
     modalContainer: {
         flex: 1,
-        justifyContent: "flex-end",
+        justifyContent: 'flex-end',
     },
     modalOverlay: {
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        backgroundColor: "#111",
+        backgroundColor: '#111',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
         paddingBottom: 10,
-        width: "100%",
-        position: "absolute",
+        width: '100%',
+        position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
@@ -676,141 +699,141 @@ const styles = StyleSheet.create({
     modalHandle: {
         width: 40,
         height: 5,
-        backgroundColor: "#333",
+        backgroundColor: '#333',
         borderRadius: 3,
-        alignSelf: "center",
+        alignSelf: 'center',
         marginBottom: 15,
     },
     modalTitle: {
         fontSize: 18,
-        fontWeight: "bold",
-        color: "#CBFF00",
+        fontWeight: 'bold',
+        color: '#CBFF00',
         marginBottom: 15,
     },
     taskInput: {
-        backgroundColor: "#222",
+        backgroundColor: '#222',
         borderRadius: 8,
-        color: "#fff",
+        color: '#fff',
         padding: 12,
         marginVertical: 10,
         fontSize: 16,
     },
     dateSelector: {
         marginVertical: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     sectionLabel: {
         fontSize: 14,
-        fontWeight: "bold",
-        color: "#fff",
+        fontWeight: 'bold',
+        color: '#fff',
         marginRight: 10,
         width: 70,
     },
     datePickerContainer: {
         flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        backgroundColor: "#222",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#222',
         borderRadius: 10,
         paddingHorizontal: 15,
         paddingVertical: 10,
     },
     dateText: {
         fontSize: 14,
-        color: "#fff",
+        color: '#fff',
     },
     optionSection: {
         marginTop: 12,
         marginBottom: 0,
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     optionsScrollView: {
         marginTop: 10,
         paddingBottom: 5,
     },
     categoryChip: {
-        backgroundColor: "#222",
+        backgroundColor: '#222',
         borderRadius: 15,
         paddingHorizontal: 10,
         paddingVertical: 5,
         marginRight: 8,
     },
     categoryChipText: {
-        color: "#CBFF00",
+        color: '#CBFF00',
         fontSize: 12,
     },
     projectChip: {
-        backgroundColor: "#222",
+        backgroundColor: '#222',
         borderRadius: 15,
         paddingHorizontal: 10,
         paddingVertical: 5,
         marginRight: 8,
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     chipIcon: {
         marginRight: 5,
     },
     projectChipText: {
-        color: "#CBFF00",
+        color: '#CBFF00',
         fontSize: 12,
     },
     selectedChip: {
-        backgroundColor: "#CBFF00",
+        backgroundColor: '#CBFF00',
     },
     selectedChipText: {
-        color: "#000",
+        color: '#000',
     },
     priorityContainer: {
         flex: 1,
-        flexDirection: "row",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
     priorityChip: {
-        backgroundColor: "#222",
+        backgroundColor: '#222',
         borderRadius: 15,
         paddingHorizontal: 10,
         paddingVertical: 5,
         marginRight: 8,
     },
     priorityChipText: {
-        color: "#fff",
+        color: '#fff',
         fontSize: 12,
-        fontWeight: "bold",
+        fontWeight: 'bold',
     },
     selectedPriorityText: {
-        color: "#000",
+        color: '#000',
     },
     addTaskButton: {
-        backgroundColor: "#CBFF00",
+        backgroundColor: '#CBFF00',
         paddingVertical: 12,
         borderRadius: 8,
-        alignItems: "center",
-        marginTop: 15,
-        marginBottom: 5,
+        alignItems: 'center',
+        marginTop: 2,
+        marginBottom: 20,
     },
     addTaskButtonText: {
-        color: "#000",
+        color: '#000',
         fontSize: 16,
-        fontWeight: "bold",
+        fontWeight: 'bold',
     },
     container: {
         flex: 1,
-        backgroundColor: "#000",
+        backgroundColor: '#000',
         paddingHorizontal: 15,
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingVertical: 20,
         paddingHorizontal: 4,
         borderBottomWidth: 1,
-        borderBottomColor: "rgba(203, 255, 0, 0.1)",
+        borderBottomColor: 'rgba(203, 255, 0, 0.1)',
     },
     scrollView: {
         flex: 1,
@@ -820,29 +843,29 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     sectionHeader: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 20,
     },
     sectionTitle: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#CBFF00",
+        fontWeight: '600',
+        color: '#CBFF00',
         marginRight: 12,
     },
     sectionDivider: {
         flex: 1,
         height: 1,
-        backgroundColor: "rgba(203, 255, 0, 0.2)",
+        backgroundColor: 'rgba(203, 255, 0, 0.2)',
     },
     taskItem: {
-        flexDirection: "row",
-        alignItems: "flex-start",
+        flexDirection: 'row',
+        alignItems: 'flex-start',
         marginBottom: 18,
         paddingHorizontal: 4,
         paddingVertical: 8,
         borderRadius: 12,
-        backgroundColor: "rgba(255, 255, 255, 0.02)",
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
     },
     taskCheckbox: {
         marginRight: 12,
@@ -853,57 +876,57 @@ const styles = StyleSheet.create({
         height: 18,
         borderRadius: 9,
         borderWidth: 1.5,
-        borderColor: "#CBFF00",
-        alignItems: "center",
-        justifyContent: "center",
+        borderColor: '#CBFF00',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     checkboxChecked: {
-        backgroundColor: "#CBFF00",
-        borderColor: "#CBFF00",
+        backgroundColor: '#CBFF00',
+        borderColor: '#CBFF00',
     },
     taskContent: {
         flex: 1,
     },
     taskTitle: {
         fontSize: 15,
-        fontWeight: "500",
-        color: "#fff",
+        fontWeight: '500',
+        color: '#fff',
         lineHeight: 20,
     },
     taskTitleChecked: {
-        color: "#777",
-        textDecorationLine: "line-through",
+        color: '#777',
+        textDecorationLine: 'line-through',
     },
     taskDescription: {
         fontSize: 13,
-        color: "rgba(255, 255, 255, 0.7)",
+        color: 'rgba(255, 255, 255, 0.7)',
         marginTop: 4,
         lineHeight: 18,
     },
     taskDescriptionChecked: {
-        color: "rgba(119, 119, 119, 0.8)",
-        textDecorationLine: "line-through",
+        color: 'rgba(119, 119, 119, 0.8)',
+        textDecorationLine: 'line-through',
     },
     taskText: {
         fontSize: 16,
-        color: "#fff",
+        color: '#fff',
     },
     taskTextChecked: {
-        color: "#777",
-        textDecorationLine: "line-through",
+        color: '#777',
+        textDecorationLine: 'line-through',
     },
     addButton: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 35,
         right: 25,
         width: 56,
         height: 56,
         borderRadius: 28,
-        backgroundColor: "#CBFF00",
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: '#CBFF00',
+        justifyContent: 'center',
+        alignItems: 'center',
         elevation: 8,
-        shadowColor: "#CBFF00",
+        shadowColor: '#CBFF00',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.25,
         shadowRadius: 8,
