@@ -21,11 +21,13 @@ import Sidebar from "../../components/Sidebar";
 
 // Component for a single task item
 const TaskItem = ({
-    text,
+    title,
+    description,
     onToggle,
     isChecked,
 }: {
-    text: string;
+    title: string;
+    description?: string;
     onToggle: () => void;
     isChecked: boolean;
 }) => {
@@ -36,7 +38,14 @@ const TaskItem = ({
                     {isChecked && <FontAwesome name="check" size={12} color="#000" />}
                 </View>
             </TouchableOpacity>
-            <Text style={[styles.taskText, isChecked && styles.taskTextChecked]}>{text}</Text>
+            <View style={styles.taskContent}>
+                <Text style={[styles.taskTitle, isChecked && styles.taskTitleChecked]}>{title}</Text>
+                {description && (
+                    <Text style={[styles.taskDescription, isChecked && styles.taskDescriptionChecked]}>
+                        {description}
+                    </Text>
+                )}
+            </View>
         </View>
     );
 };
@@ -49,21 +58,23 @@ const TaskSection = ({
     onToggleTask,
 }: {
     title: string;
-    tasks: string[];
+    tasks: { title: string; description?: string }[];
     checkedTasks: { [key: string]: boolean };
     onToggleTask: (taskId: string) => void;
 }) => {
     return (
         <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{title} :</Text>
+                <Text style={styles.sectionTitle}>{title}</Text>
+                <View style={styles.sectionDivider} />
             </View>
             {tasks.map((task, index) => {
                 const taskId = `${title.toLowerCase()}-${index}`;
                 return (
                     <TaskItem
                         key={taskId}
-                        text={task}
+                        title={task.title}
+                        description={task.description}
                         isChecked={!!checkedTasks[taskId]}
                         onToggle={() => onToggleTask(taskId)}
                     />
@@ -371,25 +382,32 @@ const AddTaskModal = ({
 };
 
 export default function TasksScreen() {
-    // State for all tasks
-    const [todayTasks, setTodayTasks] = useState(["Code Today", "Post Blogs", "Post JS content"]);
+    // State for all tasks with titles and descriptions (some without descriptions for comparison)
+    const [todayTasks, setTodayTasks] = useState([
+        { title: "Review code changes", description: "Go through pull requests and provide feedback on the new authentication system" },
+        { title: "Write blog post" }, // No description
+        { title: "Team standup meeting", description: "Daily sync with the development team at 10 AM" },
+        { title: "Fix critical bug" } // No description
+    ]);
     const [weekTasks, setWeekTasks] = useState([
-        "Finish client project",
-        "Complete JS course",
-        "Research about the upcoming AI tools",
+        { title: "Complete project milestone", description: "Finish the user dashboard feature and prepare for demo" },
+        { title: "Learn TypeScript advanced patterns" }, // No description
+        { title: "Client presentation", description: "Present the new mobile app features to stakeholders" },
+        { title: "Code refactoring" } // No description
     ]);
     const [upcomingTasks, setUpcomingTasks] = useState([
-        "Seek out for higher paying corporate Jobs",
-        "Increase social media reach",
+        { title: "Plan Q4 roadmap", description: "Define priorities and features for the next quarter" },
+        { title: "Attend tech conference" }, // No description
+        { title: "Performance optimization", description: "Analyze and improve app loading times and memory usage" }
     ]);
 
     // State for search functionality
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<{
-        today: string[];
-        week: string[];
-        upcoming: string[];
+        today: { title: string; description?: string }[];
+        week: { title: string; description?: string }[];
+        upcoming: { title: string; description?: string }[];
     }>({
         today: [],
         week: [],
@@ -423,17 +441,20 @@ export default function TasksScreen() {
             return;
         }
 
-        // Filter tasks based on search query
+        // Filter tasks based on search query (search in both title and description)
         const filteredToday = todayTasks.filter((task) =>
-            task.toLowerCase().includes(text.toLowerCase())
+            task.title.toLowerCase().includes(text.toLowerCase()) ||
+            (task.description && task.description.toLowerCase().includes(text.toLowerCase()))
         );
 
         const filteredWeek = weekTasks.filter((task) =>
-            task.toLowerCase().includes(text.toLowerCase())
+            task.title.toLowerCase().includes(text.toLowerCase()) ||
+            (task.description && task.description.toLowerCase().includes(text.toLowerCase()))
         );
 
         const filteredUpcoming = upcomingTasks.filter((task) =>
-            task.toLowerCase().includes(text.toLowerCase())
+            task.title.toLowerCase().includes(text.toLowerCase()) ||
+            (task.description && task.description.toLowerCase().includes(text.toLowerCase()))
         );
 
         setSearchResults({
@@ -588,27 +609,31 @@ const styles = StyleSheet.create({
     searchContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#222",
-        borderRadius: 8,
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        borderRadius: 12,
         flex: 1,
-        paddingLeft: 10,
-        paddingRight: 5,
+        paddingLeft: 12,
+        paddingRight: 8,
+        borderWidth: 1,
+        borderColor: "rgba(203, 255, 0, 0.2)",
     },
     searchInput: {
         flex: 1,
-        height: 40,
+        height: 44,
         color: "#fff",
-        fontSize: 16,
+        fontSize: 15,
         padding: 8,
     },
     noResultsContainer: {
-        padding: 30,
+        padding: 40,
         alignItems: "center",
         justifyContent: "center",
+        marginTop: 20,
     },
     noResultsText: {
-        color: "#666",
-        fontSize: 16,
+        color: "rgba(255, 255, 255, 0.5)",
+        fontSize: 15,
+        fontWeight: "500",
     },
     modalScrollView: {
         flex: 1,
@@ -781,37 +806,53 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 15,
-        borderBottomWidth: 0.2,
-        borderBottomColor: "#333",
+        alignItems: "center",
+        paddingVertical: 20,
+        paddingHorizontal: 4,
+        borderBottomWidth: 1,
+        borderBottomColor: "rgba(203, 255, 0, 0.1)",
     },
     scrollView: {
         flex: 1,
     },
     sectionContainer: {
-        marginTop: 20,
+        marginTop: 25,
+        marginBottom: 10,
     },
     sectionHeader: {
-        marginBottom: 15,
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
+        fontSize: 16,
+        fontWeight: "600",
         color: "#CBFF00",
+        marginRight: 12,
+    },
+    sectionDivider: {
+        flex: 1,
+        height: 1,
+        backgroundColor: "rgba(203, 255, 0, 0.2)",
     },
     taskItem: {
         flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 15,
+        alignItems: "flex-start",
+        marginBottom: 18,
+        paddingHorizontal: 4,
+        paddingVertical: 8,
+        borderRadius: 12,
+        backgroundColor: "rgba(255, 255, 255, 0.02)",
     },
     taskCheckbox: {
-        marginRight: 15,
+        marginRight: 12,
+        marginTop: 2,
     },
     checkbox: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        borderWidth: 1,
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        borderWidth: 1.5,
         borderColor: "#CBFF00",
         alignItems: "center",
         justifyContent: "center",
@@ -819,6 +860,29 @@ const styles = StyleSheet.create({
     checkboxChecked: {
         backgroundColor: "#CBFF00",
         borderColor: "#CBFF00",
+    },
+    taskContent: {
+        flex: 1,
+    },
+    taskTitle: {
+        fontSize: 15,
+        fontWeight: "500",
+        color: "#fff",
+        lineHeight: 20,
+    },
+    taskTitleChecked: {
+        color: "#777",
+        textDecorationLine: "line-through",
+    },
+    taskDescription: {
+        fontSize: 13,
+        color: "rgba(255, 255, 255, 0.7)",
+        marginTop: 4,
+        lineHeight: 18,
+    },
+    taskDescriptionChecked: {
+        color: "rgba(119, 119, 119, 0.8)",
+        textDecorationLine: "line-through",
     },
     taskText: {
         fontSize: 16,
@@ -830,18 +894,18 @@ const styles = StyleSheet.create({
     },
     addButton: {
         position: "absolute",
-        bottom: 30,
-        right: 30,
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        bottom: 35,
+        right: 25,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
         backgroundColor: "#CBFF00",
         justifyContent: "center",
         alignItems: "center",
-        elevation: 5,
+        elevation: 8,
         shadowColor: "#CBFF00",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
     },
 });
