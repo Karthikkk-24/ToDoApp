@@ -22,7 +22,7 @@ export class UsersController {
         status: 400,
         description: 'Bad request - validation errors',
     })
-    register(@Body() request: CreateUserRequestDto): BaseResponseDto {
+    async register(@Body() request: CreateUserRequestDto): Promise<BaseResponseDto> {
         try {
             console.log('\n🔹 REGISTRATION REQUEST RECEIVED 🔹');
             console.log('Correlation ID:', request.correlationId);
@@ -33,7 +33,7 @@ export class UsersController {
                 timestamp: new Date().toISOString(),
             });
 
-            const authData = this.usersService.register(request.data);
+            const authData = await this.usersService.register(request.data);
 
             console.log('✅ Registration successful for:', request.data.email);
             console.log('Generated User ID:', authData.user.id);
@@ -71,7 +71,7 @@ export class UsersController {
         status: 401,
         description: 'Unauthorized - invalid credentials',
     })
-    login(@Body() request: LoginRequestDto): BaseResponseDto {
+    async login(@Body() request: LoginRequestDto): Promise<BaseResponseDto> {
         try {
             console.log('\n🔸 LOGIN REQUEST RECEIVED 🔸');
             console.log('Correlation ID:', request.correlationId);
@@ -81,7 +81,7 @@ export class UsersController {
                 timestamp: new Date().toISOString(),
             });
 
-            const authData = this.usersService.login(request.data);
+            const authData = await this.usersService.login(request.data);
 
             console.log('✅ Login successful for:', request.data.email);
             console.log('User ID:', authData.user.id);
