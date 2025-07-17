@@ -37,18 +37,17 @@ export default function TabLayout() {
                 headerShown: false,
                 tabBarShowLabel: true, // Show labels below icons
                 tabBarStyle: {
-                    height: 85,
-                    backgroundColor: "#0A0A0A", // Slightly lighter black
-                    borderTopWidth: 1,
-                    borderTopColor: "rgba(203, 255, 0, 0.1)",
-                    paddingTop: 8,
-                    paddingBottom: 25,
+                    backgroundColor: "#000", // Pure black to match app background
+                    borderTopWidth: 0, // Remove top border
+                    paddingTop: 4,
+                    paddingBottom: 0, // Remove bottom padding
+                    height: 60, // Fixed minimal height
                     // Set lower z-index to allow sidebar to appear on top
                     zIndex: 1,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: -2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 4,
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
                 },
                 tabBarLabelStyle: {
                     fontSize: 11,
