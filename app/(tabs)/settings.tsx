@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../../components/Sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 // Component for settings option item
 const SettingsOption = ({
@@ -17,7 +17,7 @@ const SettingsOption = ({
     colors,
 }: {
     title: string;
-    iconName: "chevron-right" | "chevron-down" | "cog" | "bell" | "user" | "sign-out";
+    iconName: "chevron-right" | "chevron-down" | "cog" | "bell" | "user" | "sign-out" | "adjust";
     onPress?: () => void;
     isLogout?: boolean;
     colors: any;
@@ -33,35 +33,15 @@ const SettingsOption = ({
     );
 };
 
-// Component for theme toggle
-const ThemeToggle = ({ colors, theme, toggleTheme }: { colors: any; theme: string; toggleTheme: () => void }) => {
-    return (
-        <View style={getStyles(colors).settingsOption}>
-            <View style={getStyles(colors).settingsIconContainer}>
-                <FontAwesome name="adjust" size={16} color={colors.primary} />
-            </View>
-            <Text style={getStyles(colors).settingsOptionText}>Theme</Text>
-            <View style={getStyles(colors).themeToggleContainer}>
-                <Text style={[getStyles(colors).themeToggleText, theme === 'light' && getStyles(colors).activeThemeText]}>Light</Text>
-                <Switch
-                    value={theme === 'dark'}
-                    onValueChange={toggleTheme}
-                    trackColor={{ false: colors.border, true: colors.primary }}
-                    thumbColor={theme === 'dark' ? colors.background : colors.text}
-                    style={getStyles(colors).themeSwitch}
-                />
-                <Text style={[getStyles(colors).themeToggleText, theme === 'dark' && getStyles(colors).activeThemeText]}>Dark</Text>
-            </View>
-        </View>
-    );
-};
+
 
 export default function SettingsScreen() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const { user, logout } = useAuth();
-    const { theme, colors, toggleTheme } = useTheme();
+    const { theme, colors } = useTheme();
+    const router = useRouter();
 
     // Toggle search mode
     const toggleSearch = () => {
@@ -168,7 +148,12 @@ export default function SettingsScreen() {
                         <Text style={getStyles(colors).sectionTitle}>Preferences</Text>
                         <View style={getStyles(colors).settingsGroup}>
                             <SettingsOption title="Notifications" iconName="bell" colors={colors} />
-                            <ThemeToggle colors={colors} theme={theme} toggleTheme={toggleTheme} />
+                            <SettingsOption 
+                                title="Theme" 
+                                iconName="adjust" 
+                                onPress={() => router.push('/theme')}
+                                colors={colors} 
+                            />
                             <SettingsOption title="Weekly Goal" iconName="chevron-right" colors={colors} />
                         </View>
 
@@ -356,22 +341,7 @@ const getStyles = (colors: any) => StyleSheet.create({
         color: "#FF5252",
         fontWeight: "500",
     },
-    themeToggleContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    themeToggleText: {
-        fontSize: 14,
-        color: colors.secondary,
-        fontWeight: "500",
-    },
-    activeThemeText: {
-        color: colors.primary,
-    },
-    themeSwitch: {
-        marginHorizontal: 4,
-    },
+
 });
 
 
