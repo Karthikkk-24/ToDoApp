@@ -30,12 +30,21 @@ const CategoryItem = ({ title, expanded = false, onToggle }: { title: string; ex
 };
 
 // Project item component
-const ProjectItem = ({ title }: { title: string }) => {
+const ProjectItem = ({ title, expanded = false, onToggle }: { title: string; expanded?: boolean; onToggle: () => void }) => {
     return (
-        <View style={styles.projectItem}>
-            <FontAwesome name="hashtag" size={16} color="#CBFF00" style={styles.projectIcon} />
-            <Text style={styles.projectTitle}>{title}</Text>
-        </View>
+        <TouchableOpacity onPress={onToggle}>
+            <View style={[styles.projectItem, expanded && styles.projectItemExpanded]}>
+                <View style={styles.projectHeader}>
+                    <FontAwesome name="hashtag" size={16} color="#CBFF00" style={styles.projectIcon} />
+                    <Text style={styles.projectTitle}>{title}</Text>
+                </View>
+                {expanded && (
+                    <View style={styles.projectContent}>
+                        <Text style={styles.projectContentText}>No tasks in this project yet</Text>
+                    </View>
+                )}
+            </View>
+        </TouchableOpacity>
     );
 };
 
@@ -44,6 +53,7 @@ export default function BrowseScreen() {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedCategories, setExpandedCategories] = useState<{[key: string]: boolean}>({});
+    const [expandedProjects, setExpandedProjects] = useState<{[key: string]: boolean}>({});
 
     // Toggle search mode
     const toggleSearch = () => {
@@ -58,6 +68,14 @@ export default function BrowseScreen() {
         setExpandedCategories(prev => ({
             ...prev,
             [categoryName]: !prev[categoryName]
+        }));
+    };
+
+    // Toggle project expansion
+    const toggleProject = (projectName: string) => {
+        setExpandedProjects(prev => ({
+            ...prev,
+            [projectName]: !prev[projectName]
         }));
     };
 
@@ -132,9 +150,21 @@ export default function BrowseScreen() {
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>My Projects :</Text>
 
-                        <ProjectItem title="DSA" />
-                        <ProjectItem title="Masters Cybersecurity" />
-                        <ProjectItem title="Autism DB" />
+                        <ProjectItem 
+                            title="DSA" 
+                            expanded={expandedProjects['DSA'] || false}
+                            onToggle={() => toggleProject('DSA')}
+                        />
+                        <ProjectItem 
+                            title="Masters Cybersecurity" 
+                            expanded={expandedProjects['Masters Cybersecurity'] || false}
+                            onToggle={() => toggleProject('Masters Cybersecurity')}
+                        />
+                        <ProjectItem 
+                            title="Autism DB" 
+                            expanded={expandedProjects['Autism DB'] || false}
+                            onToggle={() => toggleProject('Autism DB')}
+                        />
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -248,14 +278,28 @@ const styles = StyleSheet.create({
         fontStyle: "italic",
     },
     projectItem: {
-        flexDirection: "row",
-        alignItems: "center",
         backgroundColor: "rgba(203, 255, 0, 0.08)",
         borderRadius: 16,
         borderWidth: 1,
         borderColor: "rgba(203, 255, 0, 0.15)",
-        padding: 16,
         marginBottom: 10,
+    },
+    projectItemExpanded: {
+        marginBottom: 15,
+    },
+    projectHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
+    },
+    projectContent: {
+        paddingHorizontal: 16,
+        paddingBottom: 12,
+    },
+    projectContentText: {
+        fontSize: 14,
+        color: "rgba(255, 255, 255, 0.6)",
+        fontStyle: "italic",
     },
     projectIcon: {
         marginRight: 12,
