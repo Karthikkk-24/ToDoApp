@@ -83,7 +83,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                                 style={styles.navigationItem}
                                 onPress={() => navigateTo(item.route)}
                             >
-                                <FontAwesome name={item.icon} size={20} color="#CBFF00" />
+                                <View style={styles.iconContainer}>
+                                    <FontAwesome name={item.icon} size={18} color="#CBFF00" />
+                                </View>
                                 <Text style={styles.navigationText}>{item.name}</Text>
                             </TouchableOpacity>
                         ))}
@@ -91,7 +93,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     
                     {/* Logout button at the bottom */}
                     <TouchableOpacity style={styles.logoutButton} onPress={() => console.log("Logout")}>
-                        <FontAwesome name="power-off" size={20} color="#FF5252" />
+                        <View style={styles.logoutIconContainer}>
+                            <FontAwesome name="power-off" size={18} color="#FF5252" />
+                        </View>
                         <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
                 </SafeAreaView>
@@ -133,11 +137,15 @@ const styles = StyleSheet.create({
         left: 0,
         bottom: 0,
         width: SIDEBAR_WIDTH,
-        backgroundColor: "#111",
+        backgroundColor: "#0F0F0F",
         borderRightWidth: 1,
-        borderRightColor: "#333",
+        borderRightColor: "rgba(203, 255, 0, 0.1)",
         zIndex: 999999,
         elevation: 999999,
+        shadowColor: "#000",
+        shadowOffset: { width: 2, height: 0 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
     },
     sidebarContent: {
         flex: 1,
@@ -145,10 +153,11 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 20,
         borderBottomWidth: 1,
-        borderBottomColor: "#333",
+        borderBottomColor: "rgba(203, 255, 0, 0.1)",
         marginBottom: 20,
+        backgroundColor: "rgba(203, 255, 0, 0.03)",
     },
     appName: {
         fontSize: 22,
@@ -161,27 +170,55 @@ const styles = StyleSheet.create({
     navigationItem: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 15,
+        paddingVertical: 12,
         paddingHorizontal: 20,
+        marginHorizontal: 10,
+        marginVertical: 4,
+        backgroundColor: "rgba(203, 255, 0, 0.08)",
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "rgba(203, 255, 0, 0.15)",
     },
     navigationText: {
         fontSize: 16,
         color: "#fff",
-        marginLeft: 15,
+        fontWeight: "500",
     },
     logoutButton: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 15,
+        paddingVertical: 12,
         paddingHorizontal: 20,
-        borderTopWidth: 1,
-        borderTopColor: "#333",
+        marginHorizontal: 10,
         marginTop: 10,
+        backgroundColor: "rgba(255, 82, 82, 0.08)",
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "rgba(255, 82, 82, 0.15)",
     },
     logoutText: {
         fontSize: 16,
         color: "#FF5252",
         marginLeft: 15,
+        fontWeight: "500",
+    },
+    iconContainer: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: "rgba(203, 255, 0, 0.12)",
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 15,
+    },
+    logoutIconContainer: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: "rgba(255, 82, 82, 0.12)",
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 15,
     },
 
 });

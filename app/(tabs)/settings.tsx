@@ -21,8 +21,11 @@ const SettingsOption = ({
 }) => {
     return (
         <TouchableOpacity style={[styles.settingsOption, isLogout && styles.logoutOption]} onPress={onPress}>
+            <View style={[styles.settingsIconContainer, isLogout && styles.logoutIconContainer]}>
+                <FontAwesome name={iconName} size={16} color={isLogout ? "#FF5252" : "#CBFF00"} />
+            </View>
             <Text style={[styles.settingsOptionText, isLogout && styles.logoutText]}>{title}</Text>
-            <FontAwesome name={iconName} size={18} color={isLogout ? "#ff4757" : "#CBFF00"} />
+            <FontAwesome name="chevron-right" size={14} color="#666" />
         </TouchableOpacity>
     );
 };
@@ -103,36 +106,54 @@ export default function SettingsScreen() {
 
                 <View style={styles.profileContainer}>
                     <View style={styles.avatarContainer}>
-                        <FontAwesome name="user-circle" size={80} color="#CBFF00" />
+                        <View style={styles.avatarCircle}>
+                            <FontAwesome name="user" size={32} color="#CBFF00" />
+                        </View>
                     </View>
 
                     <Text style={styles.userName}>{user?.name || "User"}</Text>
+                    <Text style={styles.userEmail}>{user?.email || "user@example.com"}</Text>
 
-                    <View style={styles.profileInfoContainer}>
-                        <Text style={styles.profileLabel}>
-                            Nickname : <Text style={styles.profileValue}>{user?.name?.split(' ')[0] || "User"}</Text>
-                        </Text>
-                        <Text style={styles.profileLabel}>
-                            Email ID : <Text style={styles.profileValue}>{user?.email || "user@example.com"}</Text>
-                        </Text>
-                        <Text style={styles.profileLabel}>
-                            Total tasks completed : <Text style={styles.profileValue}>99</Text>
-                        </Text>
+                    <View style={styles.statsContainer}>
+                        <View style={styles.statItem}>
+                            <Text style={styles.statNumber}>99</Text>
+                            <Text style={styles.statLabel}>Completed</Text>
+                        </View>
+                        <View style={styles.statDivider} />
+                        <View style={styles.statItem}>
+                            <Text style={styles.statNumber}>12</Text>
+                            <Text style={styles.statLabel}>Pending</Text>
+                        </View>
+                        <View style={styles.statDivider} />
+                        <View style={styles.statItem}>
+                            <Text style={styles.statNumber}>7</Text>
+                            <Text style={styles.statLabel}>Projects</Text>
+                        </View>
                     </View>
                 </View>
 
                 <View style={styles.settingsContainer}>
-                    <SettingsOption title="Notifications" iconName="chevron-right" />
-                    <SettingsOption title="Theme" iconName="chevron-right" />
-                    <SettingsOption title="Change Avatar" iconName="chevron-right" />
-                    <SettingsOption title="Change Nickname" iconName="chevron-right" />
-                    <SettingsOption title="Weekly Goal" iconName="chevron-right" />
-                    <SettingsOption 
-                        title="Logout" 
-                        iconName="sign-out" 
-                        onPress={handleLogout}
-                        isLogout={true}
-                    />
+                    <Text style={styles.sectionTitle}>Preferences</Text>
+                    <View style={styles.settingsGroup}>
+                        <SettingsOption title="Notifications" iconName="bell" />
+                        <SettingsOption title="Theme" iconName="cog" />
+                        <SettingsOption title="Weekly Goal" iconName="chevron-right" />
+                    </View>
+
+                    <Text style={styles.sectionTitle}>Account</Text>
+                    <View style={styles.settingsGroup}>
+                        <SettingsOption title="Change Avatar" iconName="user" />
+                        <SettingsOption title="Change Nickname" iconName="chevron-right" />
+                    </View>
+
+                    <View style={styles.logoutContainer}>
+                        <SettingsOption 
+                            title="Logout" 
+                            iconName="sign-out" 
+                            onPress={handleLogout}
+                            isLogout={true}
+                        />
+                    </View>
                 </View>
             </SafeAreaView>
         </>
@@ -173,57 +194,126 @@ const styles = StyleSheet.create({
     },
     profileContainer: {
         alignItems: "center",
-        marginTop: 30,
+        marginTop: 20,
         marginBottom: 30,
-        backgroundColor: "#111",
-        borderRadius: 15,
-        padding: 20,
+        backgroundColor: "rgba(203, 255, 0, 0.05)",
+        borderRadius: 20,
+        padding: 24,
+        borderWidth: 1,
+        borderColor: "rgba(203, 255, 0, 0.1)",
     },
     avatarContainer: {
-        marginBottom: 15,
+        marginBottom: 16,
+    },
+    avatarCircle: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: "rgba(203, 255, 0, 0.1)",
+        justifyContent: "center",
+        alignItems: "center",
+        borderWidth: 2,
+        borderColor: "rgba(203, 255, 0, 0.2)",
     },
     userName: {
-        fontSize: 22,
-        fontWeight: "bold",
+        fontSize: 24,
+        fontWeight: "600",
         color: "#fff",
-        marginBottom: 15,
+        marginBottom: 4,
     },
-    profileInfoContainer: {
-        width: "100%",
-        marginTop: 10,
-    },
-    profileLabel: {
+    userEmail: {
         fontSize: 14,
-        color: "#fff",
-        marginBottom: 8,
+        color: "#999",
+        marginBottom: 20,
     },
-    profileValue: {
-        color: "#CBFF00",
+    statsContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
+        width: "100%",
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: "rgba(203, 255, 0, 0.1)",
+    },
+    statItem: {
+        alignItems: "center",
+        flex: 1,
+    },
+    statNumber: {
+        fontSize: 20,
         fontWeight: "bold",
+        color: "#CBFF00",
+        marginBottom: 4,
+    },
+    statLabel: {
+        fontSize: 12,
+        color: "#999",
+        textAlign: "center",
+    },
+    statDivider: {
+        width: 1,
+        height: 40,
+        backgroundColor: "rgba(203, 255, 0, 0.1)",
+        marginHorizontal: 16,
     },
     settingsContainer: {
-        backgroundColor: "#111",
-        borderRadius: 15,
+        flex: 1,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#CBFF00",
+        marginBottom: 12,
+        marginTop: 20,
+        paddingHorizontal: 4,
+    },
+    settingsGroup: {
+        backgroundColor: "rgba(203, 255, 0, 0.05)",
+        borderRadius: 16,
+        marginBottom: 8,
+        borderWidth: 1,
+        borderColor: "rgba(203, 255, 0, 0.1)",
+        overflow: "hidden",
     },
     settingsOption: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: 15,
-        paddingHorizontal: 20,
+        paddingVertical: 16,
+        paddingHorizontal: 16,
         borderBottomWidth: 0.5,
-        borderBottomColor: "#333",
+        borderBottomColor: "rgba(203, 255, 0, 0.1)",
+    },
+    settingsIconContainer: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: "rgba(203, 255, 0, 0.1)",
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 12,
+    },
+    logoutIconContainer: {
+        backgroundColor: "rgba(255, 82, 82, 0.1)",
     },
     settingsOptionText: {
         fontSize: 16,
         color: "#fff",
+        flex: 1,
+        fontWeight: "500",
+    },
+    logoutContainer: {
+        marginTop: 20,
+        backgroundColor: "rgba(255, 82, 82, 0.05)",
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "rgba(255, 82, 82, 0.1)",
+        overflow: "hidden",
     },
     logoutOption: {
-        borderTopWidth: 1,
-        borderTopColor: "#333",
-        marginTop: 10,
+        borderBottomWidth: 0,
     },
     logoutText: {
-        color: "#ff4757",
+        color: "#FF5252",
+        fontWeight: "500",
     },
 });

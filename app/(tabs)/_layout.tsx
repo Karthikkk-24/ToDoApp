@@ -9,6 +9,23 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+// Custom tab icon component with rounded background
+const TabIcon = ({ name, size = 24, color, focused }: { name: any, size?: number, color: string, focused: boolean }) => {
+    return (
+        <View style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: focused ? 'rgba(203, 255, 0, 0.15)' : 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 4,
+        }}>
+            <FontAwesome name={name} size={size} color={color} />
+        </View>
+    );
+};
+
 export default function TabLayout() {
     const colorScheme = useColorScheme();
 
@@ -16,22 +33,28 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 tabBarActiveTintColor: "#CBFF00", // Neon green from the design
-                tabBarInactiveTintColor: "#444", // Darker inactive icons
+                tabBarInactiveTintColor: "#666", // Softer inactive icons
                 headerShown: false,
                 tabBarShowLabel: true, // Show labels below icons
                 tabBarStyle: {
-                    height: 80,
-                    backgroundColor: "#000", // Pure black background
-                    borderTopWidth: 0,
-                    paddingTop: 5,
+                    height: 85,
+                    backgroundColor: "#0A0A0A", // Slightly lighter black
+                    borderTopWidth: 1,
+                    borderTopColor: "rgba(203, 255, 0, 0.1)",
+                    paddingTop: 8,
                     paddingBottom: 25,
                     // Set lower z-index to allow sidebar to appear on top
                     zIndex: 1,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: -2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
                 },
                 tabBarLabelStyle: {
-                    fontSize: 10,
+                    fontSize: 11,
                     marginBottom: 5,
                     paddingBottom: 2,
+                    fontWeight: "500",
                 },
             }}
         >
@@ -39,21 +62,21 @@ export default function TabLayout() {
                 name="index"
                 options={{
                     title: "Home",
-                    tabBarIcon: ({ color }) => <FontAwesome name="home" size={24} color={color} />,
+                    tabBarIcon: ({ color, focused }) => <TabIcon name="home" color={color} focused={focused} />,
                 }}
             />
             <Tabs.Screen
                 name="browse"
                 options={{
                     title: "Browse",
-                    tabBarIcon: ({ color }) => <FontAwesome name="list" size={24} color={color} />,
+                    tabBarIcon: ({ color, focused }) => <TabIcon name="th-large" color={color} focused={focused} />,
                 }}
             />
             <Tabs.Screen
                 name="settings"
                 options={{
                     title: "Settings",
-                    tabBarIcon: ({ color }) => <FontAwesome name="cog" size={24} color={color} />,
+                    tabBarIcon: ({ color, focused }) => <TabIcon name="cog" color={color} focused={focused} />,
                 }}
             />
         </Tabs>
