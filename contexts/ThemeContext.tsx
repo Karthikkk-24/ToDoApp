@@ -27,9 +27,9 @@ interface ThemeContextType {
 const lightTheme: ThemeColors = {
   background: '#FFFFFF',
   text: '#000000',
-  primary: '#CBFF00',
+  primary: '#007AFF',
   secondary: '#666666',
-  accent: '#CBFF00',
+  accent: '#007AFF',
   border: '#E0E0E0',
   cardBackground: '#F8F8F8',
   placeholder: '#999999',
