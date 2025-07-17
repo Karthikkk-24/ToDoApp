@@ -6,23 +6,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../../components/Sidebar";
 
 // Category item component
-const CategoryItem = ({ title, expanded = false }: { title: string; expanded?: boolean }) => {
+const CategoryItem = ({ title, expanded = false, onToggle }: { title: string; expanded?: boolean; onToggle: () => void }) => {
     return (
-        <View style={[styles.categoryItem, expanded && styles.categoryItemExpanded]}>
-            <View style={styles.categoryHeader}>
-                <Text style={styles.categoryTitle}>{title}</Text>
-                <FontAwesome
-                    name={expanded ? "chevron-down" : "chevron-right"}
-                    size={16}
-                    color="#CBFF00"
-                />
-            </View>
-            {expanded && (
-                <View style={styles.categoryContent}>
-                    {/* This would be populated with actual category items in a real app */}
+        <TouchableOpacity onPress={onToggle}>
+            <View style={[styles.categoryItem, expanded && styles.categoryItemExpanded]}>
+                <View style={styles.categoryHeader}>
+                    <Text style={styles.categoryTitle}>{title}</Text>
+                    <FontAwesome
+                        name={expanded ? "chevron-down" : "chevron-right"}
+                        size={16}
+                        color="#CBFF00"
+                    />
                 </View>
-            )}
-        </View>
+                {expanded && (
+                    <View style={styles.categoryContent}>
+                        {/* This would be populated with actual category items in a real app */}
+                        <Text style={styles.categoryContentText}>No items in this category yet</Text>
+                    </View>
+                )}
+            </View>
+        </TouchableOpacity>
     );
 };
 
@@ -40,6 +43,7 @@ export default function BrowseScreen() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [expandedCategories, setExpandedCategories] = useState<{[key: string]: boolean}>({});
 
     // Toggle search mode
     const toggleSearch = () => {
@@ -47,6 +51,14 @@ export default function BrowseScreen() {
         if (isSearchActive) {
             setSearchQuery("");
         }
+    };
+
+    // Toggle category expansion
+    const toggleCategory = (categoryName: string) => {
+        setExpandedCategories(prev => ({
+            ...prev,
+            [categoryName]: !prev[categoryName]
+        }));
     };
 
     return (
@@ -105,8 +117,16 @@ export default function BrowseScreen() {
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Tags :</Text>
 
-                        <CategoryItem title="Javascript" expanded={true} />
-                        <CategoryItem title="Client Work" />
+                        <CategoryItem 
+                            title="Javascript" 
+                            expanded={expandedCategories['Javascript'] || false}
+                            onToggle={() => toggleCategory('Javascript')}
+                        />
+                        <CategoryItem 
+                            title="Client Work" 
+                            expanded={expandedCategories['Client Work'] || false}
+                            onToggle={() => toggleCategory('Client Work')}
+                        />
                     </View>
 
                     <View style={styles.section}>
@@ -221,6 +241,11 @@ const styles = StyleSheet.create({
     categoryContent: {
         paddingHorizontal: 16,
         paddingBottom: 12,
+    },
+    categoryContentText: {
+        fontSize: 14,
+        color: "rgba(255, 255, 255, 0.6)",
+        fontStyle: "italic",
     },
     projectItem: {
         flexDirection: "row",
