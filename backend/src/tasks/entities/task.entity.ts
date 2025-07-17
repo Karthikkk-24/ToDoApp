@@ -24,18 +24,16 @@ export class Task {
   description?: string;
 
   @Column({
-    type: 'enum',
-    enum: TaskPriority,
-    default: TaskPriority.MEDIUM,
+    type: 'varchar',
+    default: 'medium',
   })
-  priority: TaskPriority;
+  priority: string;
 
   @Column({
-    type: 'enum',
-    enum: TaskStatus,
-    default: TaskStatus.PENDING,
+    type: 'varchar',
+    default: 'pending',
   })
-  status: TaskStatus;
+  status: string;
 
   @Column({ nullable: true })
   dueDate?: Date;
