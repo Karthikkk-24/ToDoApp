@@ -24,7 +24,22 @@ export class UsersController {
     })
     register(@Body() request: CreateUserRequestDto): BaseResponseDto {
         try {
+            console.log('\n🔹 REGISTRATION REQUEST RECEIVED 🔹');
+            console.log('Correlation ID:', request.correlationId);
+            console.log('Request Data:', {
+                email: request.data.email,
+                name: request.data.name,
+                phone: request.data.phone || 'Not provided',
+                timestamp: new Date().toISOString(),
+            });
+
             const authData = this.usersService.register(request.data);
+
+            console.log('✅ Registration successful for:', request.data.email);
+            console.log('Generated User ID:', authData.user.id);
+            console.log('Generated Token:', authData.token.substring(0, 20) + '...');
+            console.log('🔹 END REGISTRATION 🔹\n');
+
             return BaseResponseDto.success(
                 authData,
                 'User registered successfully',
@@ -32,7 +47,11 @@ export class UsersController {
             );
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            console.error('Registration error:', errorMessage);
+            console.error('❌ Registration error for:', request.data?.email || 'unknown');
+            console.error('Error details:', errorMessage);
+            console.error('Correlation ID:', request.correlationId);
+            console.error('🔹 END REGISTRATION ERROR 🔹\n');
+
             return BaseResponseDto.error(
                 'Registration failed',
                 [errorMessage],
@@ -54,11 +73,30 @@ export class UsersController {
     })
     login(@Body() request: LoginRequestDto): BaseResponseDto {
         try {
+            console.log('\n🔸 LOGIN REQUEST RECEIVED 🔸');
+            console.log('Correlation ID:', request.correlationId);
+            console.log('Request Data:', {
+                email: request.data.email,
+                passwordProvided: !!request.data.password,
+                timestamp: new Date().toISOString(),
+            });
+
             const authData = this.usersService.login(request.data);
+
+            console.log('✅ Login successful for:', request.data.email);
+            console.log('User ID:', authData.user.id);
+            console.log('User Name:', authData.user.name);
+            console.log('Generated Token:', authData.token.substring(0, 20) + '...');
+            console.log('🔸 END LOGIN 🔸\n');
+
             return BaseResponseDto.success(authData, 'Login successful', request.correlationId);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            console.error('Login error:', errorMessage);
+            console.error('❌ Login error for:', request.data?.email || 'unknown');
+            console.error('Error details:', errorMessage);
+            console.error('Correlation ID:', request.correlationId);
+            console.error('🔸 END LOGIN ERROR 🔸\n');
+
             return BaseResponseDto.error('Login failed', [errorMessage], request.correlationId);
         }
     }
