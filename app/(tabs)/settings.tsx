@@ -1,7 +1,7 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../../components/Sidebar";
 import { useAuth } from "@/contexts/AuthContext";
@@ -104,57 +104,63 @@ export default function SettingsScreen() {
                     )}
                 </View>
 
-                <View style={styles.profileContainer}>
-                    <View style={styles.avatarContainer}>
-                        <View style={styles.avatarCircle}>
-                            <FontAwesome name="user" size={32} color="#CBFF00" />
+                <ScrollView 
+                    style={styles.scrollContainer}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.profileContainer}>
+                        <View style={styles.avatarContainer}>
+                            <View style={styles.avatarCircle}>
+                                <FontAwesome name="user" size={32} color="#CBFF00" />
+                            </View>
+                        </View>
+
+                        <Text style={styles.userName}>{user?.name || "User"}</Text>
+                        <Text style={styles.userEmail}>{user?.email || "user@example.com"}</Text>
+
+                        <View style={styles.statsContainer}>
+                            <View style={styles.statItem}>
+                                <Text style={styles.statNumber}>99</Text>
+                                <Text style={styles.statLabel}>Completed</Text>
+                            </View>
+                            <View style={styles.statDivider} />
+                            <View style={styles.statItem}>
+                                <Text style={styles.statNumber}>12</Text>
+                                <Text style={styles.statLabel}>Pending</Text>
+                            </View>
+                            <View style={styles.statDivider} />
+                            <View style={styles.statItem}>
+                                <Text style={styles.statNumber}>7</Text>
+                                <Text style={styles.statLabel}>Projects</Text>
+                            </View>
                         </View>
                     </View>
 
-                    <Text style={styles.userName}>{user?.name || "User"}</Text>
-                    <Text style={styles.userEmail}>{user?.email || "user@example.com"}</Text>
-
-                    <View style={styles.statsContainer}>
-                        <View style={styles.statItem}>
-                            <Text style={styles.statNumber}>99</Text>
-                            <Text style={styles.statLabel}>Completed</Text>
+                    <View style={styles.settingsContainer}>
+                        <Text style={styles.sectionTitle}>Preferences</Text>
+                        <View style={styles.settingsGroup}>
+                            <SettingsOption title="Notifications" iconName="bell" />
+                            <SettingsOption title="Theme" iconName="cog" />
+                            <SettingsOption title="Weekly Goal" iconName="chevron-right" />
                         </View>
-                        <View style={styles.statDivider} />
-                        <View style={styles.statItem}>
-                            <Text style={styles.statNumber}>12</Text>
-                            <Text style={styles.statLabel}>Pending</Text>
+
+                        <Text style={styles.sectionTitle}>Account</Text>
+                        <View style={styles.settingsGroup}>
+                            <SettingsOption title="Change Avatar" iconName="user" />
+                            <SettingsOption title="Change Nickname" iconName="chevron-right" />
                         </View>
-                        <View style={styles.statDivider} />
-                        <View style={styles.statItem}>
-                            <Text style={styles.statNumber}>7</Text>
-                            <Text style={styles.statLabel}>Projects</Text>
+
+                        <View style={styles.logoutContainer}>
+                            <SettingsOption 
+                                title="Logout" 
+                                iconName="sign-out" 
+                                onPress={handleLogout}
+                                isLogout={true}
+                            />
                         </View>
                     </View>
-                </View>
-
-                <View style={styles.settingsContainer}>
-                    <Text style={styles.sectionTitle}>Preferences</Text>
-                    <View style={styles.settingsGroup}>
-                        <SettingsOption title="Notifications" iconName="bell" />
-                        <SettingsOption title="Theme" iconName="cog" />
-                        <SettingsOption title="Weekly Goal" iconName="chevron-right" />
-                    </View>
-
-                    <Text style={styles.sectionTitle}>Account</Text>
-                    <View style={styles.settingsGroup}>
-                        <SettingsOption title="Change Avatar" iconName="user" />
-                        <SettingsOption title="Change Nickname" iconName="chevron-right" />
-                    </View>
-
-                    <View style={styles.logoutContainer}>
-                        <SettingsOption 
-                            title="Logout" 
-                            iconName="sign-out" 
-                            onPress={handleLogout}
-                            isLogout={true}
-                        />
-                    </View>
-                </View>
+                </ScrollView>
             </SafeAreaView>
         </>
     );
@@ -191,6 +197,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: "#fff",
+    },
+    scrollContainer: {
+        flex: 1,
+    },
+    scrollContent: {
+        paddingBottom: 20,
     },
     profileContainer: {
         alignItems: "center",
@@ -257,7 +269,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
     },
     settingsContainer: {
-        flex: 1,
+        marginBottom: 20,
     },
     sectionTitle: {
         fontSize: 16,
